@@ -7,6 +7,8 @@ import { Wallet } from './pages/Wallet';
 import { Plans } from './pages/Plans';
 import { Admin } from './pages/Admin';
 import { Login } from './pages/Login';
+import { Profile } from './pages/Profile';
+import { Leaderboard } from './pages/Leaderboard';
 import { AuthProvider, useAuth } from './services/authContext';
 import { Toaster } from 'react-hot-toast';
 
@@ -33,8 +35,10 @@ const AppContent = () => {
       <Routes>
         <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
         <Route path="/earn" element={<ProtectedRoute><Earn /></ProtectedRoute>} />
+        <Route path="/leaderboard" element={<ProtectedRoute><Leaderboard /></ProtectedRoute>} />
         <Route path="/wallet" element={<ProtectedRoute><Wallet /></ProtectedRoute>} />
         <Route path="/plans" element={<ProtectedRoute><Plans /></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
         <Route path="/admin" element={<ProtectedRoute requireAdmin={true}><Admin /></ProtectedRoute>} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

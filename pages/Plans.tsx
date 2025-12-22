@@ -3,7 +3,7 @@ import { useAuth } from '../services/authContext';
 import { Card, Button, Badge } from '../components/ui';
 import { PLANS } from '../constants';
 import { PlanTier } from '../types';
-import { Check, Crown } from 'lucide-react';
+import { Check, Crown, Zap } from 'lucide-react';
 
 export const Plans: React.FC = () => {
   const { user } = useAuth();
@@ -21,10 +21,10 @@ export const Plans: React.FC = () => {
         {Object.values(PLANS).map((plan) => {
             const isCurrent = user.planId === plan.id;
             const isTrial = plan.id === PlanTier.TRIAL;
-            const isElite = plan.id === PlanTier.ELITE;
+            const isUltra = plan.id === PlanTier.ULTRA;
 
             return (
-                <Card key={plan.id} className={`p-6 relative flex flex-col transition-transform hover:-translate-y-1 duration-300 ${isCurrent ? 'ring-2 ring-emerald-500 shadow-xl shadow-emerald-500/10' : ''} ${isElite ? 'bg-gradient-to-b from-gray-900 to-gray-800 text-white' : ''}`}>
+                <Card key={plan.id} className={`p-6 relative flex flex-col transition-transform hover:-translate-y-1 duration-300 ${isCurrent ? 'ring-2 ring-emerald-500 shadow-xl shadow-emerald-500/10' : ''} ${isUltra ? 'bg-gradient-to-b from-gray-900 to-gray-800 text-white' : ''}`}>
                     {isCurrent && (
                         <div className="absolute top-0 left-0 right-0 bg-emerald-500 text-white text-[10px] font-bold text-center py-1 rounded-t-lg tracking-widest uppercase">
                             Current Plan
@@ -32,28 +32,32 @@ export const Plans: React.FC = () => {
                     )}
                     
                     <div className="mt-4 mb-6">
-                        {isElite && <Crown className="text-amber-400 mb-2" size={24} fill="currentColor" />}
-                        <h3 className={`text-lg font-bold uppercase tracking-wide ${isElite ? 'text-gray-100' : 'text-gray-900'}`}>{plan.id}</h3>
+                        {isUltra && <Crown className="text-amber-400 mb-2" size={24} fill="currentColor" />}
+                        <h3 className={`text-lg font-bold uppercase tracking-wide ${isUltra ? 'text-gray-100' : 'text-gray-900'}`}>{plan.id}</h3>
                         <div className="flex items-baseline gap-1 mt-2">
-                            <span className={`text-4xl font-extrabold ${isElite ? 'text-white' : 'text-gray-900'}`}>₹{plan.priceINR}</span>
-                            <span className={`text-sm ${isElite ? 'text-gray-400' : 'text-gray-500'}`}>/ {plan.durationDays}d</span>
+                            <span className={`text-4xl font-extrabold ${isUltra ? 'text-white' : 'text-gray-900'}`}>₹{plan.priceINR}</span>
+                            <span className={`text-sm ${isUltra ? 'text-gray-400' : 'text-gray-500'}`}>/ {plan.durationDays}d</span>
                         </div>
                     </div>
 
                     <div className="flex-1 space-y-4 mb-8">
-                        <div className={`text-sm font-medium flex items-center gap-2 ${isElite ? 'text-gray-300' : 'text-gray-600'}`}>
+                        <div className={`text-sm font-medium flex items-center gap-2 ${isUltra ? 'text-gray-300' : 'text-gray-600'}`}>
                             <div className="p-1 rounded-full bg-emerald-100 text-emerald-600"><Check size={12} strokeWidth={3} /></div>
                             <span>{plan.dailyVideoLimit} Videos/day</span>
                         </div>
-                        <div className={`text-sm font-medium flex items-center gap-2 ${isElite ? 'text-gray-300' : 'text-gray-600'}`}>
+                        <div className={`text-sm font-medium flex items-center gap-2 ${isUltra ? 'text-gray-300' : 'text-gray-600'}`}>
                             <div className="p-1 rounded-full bg-emerald-100 text-emerald-600"><Check size={12} strokeWidth={3} /></div>
                             <span>{plan.dailyLinkLimit} Links/day</span>
                         </div>
-                        <div className={`text-sm font-medium flex items-center gap-2 ${isElite ? 'text-gray-300' : 'text-gray-600'}`}>
-                             <div className="p-1 rounded-full bg-emerald-100 text-emerald-600"><Check size={12} strokeWidth={3} /></div>
-                            <span>${plan.videoRate} per 5 videos</span>
+                        <div className={`text-sm font-medium flex items-center gap-2 ${isUltra ? 'text-gray-300' : 'text-gray-600'}`}>
+                             <div className="p-1 rounded-full bg-emerald-100 text-emerald-600"><Zap size={12} strokeWidth={3} /></div>
+                            <span>${plan.videoRate} per {plan.videoRateBasis} videos</span>
                         </div>
-                        <div className={`text-sm font-medium flex items-center gap-2 ${isElite ? 'text-gray-300' : 'text-gray-600'}`}>
+                        <div className={`text-sm font-medium flex items-center gap-2 ${isUltra ? 'text-gray-300' : 'text-gray-600'}`}>
+                             <div className="p-1 rounded-full bg-emerald-100 text-emerald-600"><Zap size={12} strokeWidth={3} /></div>
+                            <span>${plan.linkRate} per {plan.linkRateBasis} links</span>
+                        </div>
+                        <div className={`text-sm font-medium flex items-center gap-2 ${isUltra ? 'text-gray-300' : 'text-gray-600'}`}>
                              <div className="p-1 rounded-full bg-emerald-100 text-emerald-600"><Check size={12} strokeWidth={3} /></div>
                              <span>Min Payout ${plan.minWithdrawal}</span>
                         </div>
@@ -61,7 +65,7 @@ export const Plans: React.FC = () => {
 
                     <Button 
                         variant={isCurrent ? 'outline' : 'primary'} 
-                        className={`w-full mt-auto ${isElite && !isCurrent ? 'bg-amber-400 hover:bg-amber-500 text-gray-900 shadow-amber-400/20' : ''}`}
+                        className={`w-full mt-auto ${isUltra && !isCurrent ? 'bg-amber-400 hover:bg-amber-500 text-gray-900 shadow-amber-400/20' : ''}`}
                         disabled={isCurrent || isTrial}
                     >
                         {isCurrent ? 'Active' : 'Upgrade Now'}

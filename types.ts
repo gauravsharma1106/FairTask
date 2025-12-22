@@ -6,10 +6,27 @@ export enum UserStatus {
 
 export enum PlanTier {
   TRIAL = 'TRIAL',
-  BASIC = 'BASIC', // 199
-  STANDARD = 'STANDARD', // 259
-  PREMIUM = 'PREMIUM', // 599
-  ELITE = 'ELITE' // 999
+  STARTER = 'STARTER', // 199
+  BASIC = 'BASIC', // 259
+  PRO = 'PRO', // 599
+  ULTRA = 'ULTRA' // 999
+}
+
+export enum LeaderboardTimeframe {
+  DAILY = 'DAILY',
+  WEEKLY = 'WEEKLY',
+  MONTHLY = 'MONTHLY',
+  YEARLY = 'YEARLY',
+  LIFETIME = 'LIFETIME'
+}
+
+export interface LeaderboardEntry {
+  rank: number;
+  userId: string;
+  name: string; // Already masked from backend
+  planId: PlanTier;
+  earnings: number; // Net Verified Earnings
+  tasksCompleted: number;
 }
 
 export interface Wallet {
@@ -43,8 +60,10 @@ export interface PlanConfig {
   durationDays: number;
   dailyVideoLimit: number;
   dailyLinkLimit: number;
-  videoRate: number; // per 5 videos
-  linkRate: number; // per 5 links
+  videoRate: number; 
+  videoRateBasis: number; // e.g. 5 or 6
+  linkRate: number;
+  linkRateBasis: number; // e.g. 5 or 7
   minWithdrawal: number;
 }
 

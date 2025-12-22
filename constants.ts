@@ -16,50 +16,60 @@ export const PLANS: Record<PlanTier, PlanConfig> = {
     id: PlanTier.TRIAL,
     priceINR: 59,
     durationDays: 7,
-    dailyVideoLimit: 5,
-    dailyLinkLimit: 5,
-    videoRate: 0.3, // for 5 videos ($0.06 per video)
-    linkRate: 0.5, // for 5 links ($0.10 per link)
+    dailyVideoLimit: 8,
+    dailyLinkLimit: 3,
+    videoRate: 0.3,
+    videoRateBasis: 5,
+    linkRate: 0.5,
+    linkRateBasis: 5,
     minWithdrawal: 10
+  },
+  [PlanTier.STARTER]: {
+    id: PlanTier.STARTER,
+    priceINR: 199,
+    durationDays: 30,
+    dailyVideoLimit: 15,
+    dailyLinkLimit: 8,
+    videoRate: 0.5,
+    videoRateBasis: 5,
+    linkRate: 0.7,
+    linkRateBasis: 5,
+    minWithdrawal: 50
   },
   [PlanTier.BASIC]: {
     id: PlanTier.BASIC,
-    priceINR: 199,
-    durationDays: 30,
-    dailyVideoLimit: 5,
-    dailyLinkLimit: 5,
-    videoRate: 0.5,
-    linkRate: 0.7,
-    minWithdrawal: 50
-  },
-  [PlanTier.STANDARD]: {
-    id: PlanTier.STANDARD,
     priceINR: 259,
     durationDays: 30,
-    dailyVideoLimit: 5,
-    dailyLinkLimit: 5,
+    dailyVideoLimit: 15,
+    dailyLinkLimit: 10,
     videoRate: 0.7,
+    videoRateBasis: 5,
     linkRate: 0.9,
+    linkRateBasis: 5,
     minWithdrawal: 50
   },
-  [PlanTier.PREMIUM]: {
-    id: PlanTier.PREMIUM,
+  [PlanTier.PRO]: {
+    id: PlanTier.PRO,
     priceINR: 599,
     durationDays: 30,
-    dailyVideoLimit: 5,
-    dailyLinkLimit: 5,
+    dailyVideoLimit: 20,
+    dailyLinkLimit: 15,
     videoRate: 0.7,
+    videoRateBasis: 5,
     linkRate: 0.9,
+    linkRateBasis: 5,
     minWithdrawal: 50
   },
-  [PlanTier.ELITE]: {
-    id: PlanTier.ELITE,
+  [PlanTier.ULTRA]: {
+    id: PlanTier.ULTRA,
     priceINR: 999,
     durationDays: 30,
-    dailyVideoLimit: 6,
-    dailyLinkLimit: 7,
-    videoRate: 1.0, // for 6 videos (~$0.166)
-    linkRate: 1.0, // for 7 links (~$0.142)
+    dailyVideoLimit: 50,
+    dailyLinkLimit: 20,
+    videoRate: 1.0,
+    videoRateBasis: 6,
+    linkRate: 1.0,
+    linkRateBasis: 7,
     minWithdrawal: 50
   }
 };

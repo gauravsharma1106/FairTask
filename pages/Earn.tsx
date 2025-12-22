@@ -15,6 +15,10 @@ export const Earn: React.FC = () => {
   if (!user) return null;
   const plan = PLANS[user.planId];
 
+  // Calculate daily potential
+  const dailyPotential = ((plan.videoRate / plan.videoRateBasis) * plan.dailyVideoLimit) + 
+                         ((plan.linkRate / plan.linkRateBasis) * plan.dailyLinkLimit);
+
   const startTask = (type: 'VIDEO' | 'LINK') => {
     // Client-side pre-check
     const current = type === 'VIDEO' ? user.dailyStats.videosWatched : user.dailyStats.linksVisited;
@@ -110,7 +114,7 @@ export const Earn: React.FC = () => {
             <div className="text-right">
                 <p className="text-xs text-gray-400 font-bold uppercase tracking-wider">Today's Potential</p>
                 <p className="text-lg font-bold text-emerald-600">
-                    ${(plan.videoRate + plan.linkRate).toFixed(2)}
+                    ${dailyPotential.toFixed(2)}
                 </p>
             </div>
        </div>
@@ -128,7 +132,7 @@ export const Earn: React.FC = () => {
                 
                 <div className="flex items-center justify-between text-xs font-semibold text-gray-400 mb-6 bg-gray-50 p-3 rounded-lg">
                     <span className="flex items-center gap-1"><Clock size={14}/> 15 Seconds</span>
-                    <span className="text-emerald-600">~${(plan.videoRate/5).toFixed(3)}/view</span>
+                    <span className="text-emerald-600">~${(plan.videoRate/plan.videoRateBasis).toFixed(3)}/view</span>
                 </div>
 
                 <Button 
@@ -152,7 +156,7 @@ export const Earn: React.FC = () => {
                 
                 <div className="flex items-center justify-between text-xs font-semibold text-gray-400 mb-6 bg-gray-50 p-3 rounded-lg">
                     <span className="flex items-center gap-1"><Clock size={14}/> 10 Seconds</span>
-                    <span className="text-emerald-600">~${(plan.linkRate/5).toFixed(3)}/visit</span>
+                    <span className="text-emerald-600">~${(plan.linkRate/plan.linkRateBasis).toFixed(3)}/visit</span>
                 </div>
 
                 <Button 

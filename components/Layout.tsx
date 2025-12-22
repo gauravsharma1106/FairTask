@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../services/authContext';
-import { LayoutDashboard, Wallet, PlayCircle, Crown, LogOut, ShieldAlert, Zap } from 'lucide-react';
+import { LayoutDashboard, Wallet, PlayCircle, Crown, LogOut, ShieldAlert, Zap, Trophy } from 'lucide-react';
 
 export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, isAdmin, logout } = useAuth();
@@ -15,6 +15,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
   const navItems = [
     { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
     { icon: PlayCircle, label: 'Earn', path: '/earn' },
+    { icon: Trophy, label: 'Leaderboard', path: '/leaderboard' },
     { icon: Wallet, label: 'Wallet', path: '/wallet' },
     { icon: Crown, label: 'Plans', path: '/plans' },
   ];
@@ -31,7 +32,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
             <Zap className="text-emerald-500 fill-emerald-500" size={24} />
             FairTask
         </div>
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-3" onClick={() => navigate('/profile')}>
           <span className="text-xs font-bold text-emerald-600 bg-emerald-100 px-2 py-1 rounded-lg">${user?.wallet.main.toFixed(2)}</span>
           <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center text-xs text-white shadow-lg shadow-emerald-500/20">
             {user?.name.charAt(0)}
@@ -64,7 +65,21 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
           ))}
         </nav>
 
+        {/* User Mini Profile - Clickable */}
         <div className="p-6">
+            <div 
+                onClick={() => navigate('/profile')}
+                className="flex items-center gap-3 p-3 bg-white/40 rounded-xl cursor-pointer hover:bg-white/60 transition-colors mb-4 border border-white/50"
+            >
+                <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center text-sm font-bold text-white shadow-md">
+                    {user?.name.charAt(0)}
+                </div>
+                <div className="flex-1 min-w-0">
+                    <p className="text-sm font-bold text-gray-900 truncate">{user?.name}</p>
+                    <p className="text-xs text-gray-500 truncate">{user?.phone || 'No Phone'}</p>
+                </div>
+            </div>
+
             <button onClick={logout} className="flex items-center space-x-3 px-4 py-3 text-gray-500 hover:text-red-500 hover:bg-red-50 rounded-xl w-full transition-colors">
                 <LogOut size={20} />
                 <span className="font-medium">Sign Out</span>
@@ -92,7 +107,6 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
                 <div className={`p-1.5 rounded-lg transition-all ${isActive ? 'bg-emerald-100' : ''}`}>
                     <item.icon size={22} strokeWidth={isActive ? 2.5 : 2} />
                 </div>
-                {/* <span className="text-[9px] font-bold">{item.label}</span> */}
               </>
             )}
           </NavLink>

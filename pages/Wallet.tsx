@@ -5,6 +5,7 @@ import { Card, Button, Input, Badge } from '../components/ui';
 import { PLANS, FEES, EXCHANGE_RATE } from '../constants';
 import { LedgerEntry, TransactionStatus } from '../types';
 import toast from 'react-hot-toast';
+import { Wallet as WalletIcon, ArrowUpRight, Clock, ShieldCheck } from 'lucide-react';
 
 export const Wallet: React.FC = () => {
   const { user, refreshUser } = useAuth();
@@ -49,18 +50,34 @@ export const Wallet: React.FC = () => {
 
   return (
     <div className="space-y-8">
+      {/* Header */}
+      <div className="flex items-center gap-3">
+        <div className="p-3 bg-emerald-100 text-emerald-600 rounded-2xl">
+            <WalletIcon size={28} />
+        </div>
+        <div>
+            <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Wallet</h1>
+            <p className="text-gray-500 text-sm">Manage your earnings and payouts</p>
+        </div>
+      </div>
+
       {/* Balances */}
       <div className="grid grid-cols-2 gap-6">
-          <Card className="p-8 col-span-2 md:col-span-1 bg-gray-900 text-white !border-gray-800">
-              <p className="text-gray-400 text-xs font-bold uppercase tracking-widest">Withdrawable Balance</p>
-              <h2 className="text-4xl font-extrabold mt-3 text-white">${user.wallet.main.toFixed(2)}</h2>
-              <p className="text-sm text-gray-500 mt-2 font-mono">≈ ₹{(user.wallet.main * EXCHANGE_RATE).toFixed(2)} INR</p>
-          </Card>
-           <Card className="p-8 col-span-2 md:col-span-1 bg-white">
+          {/* Main Balance - Updated to Green/White Theme */}
+          <div className="glass-card rounded-2xl p-8 col-span-2 md:col-span-1 bg-gradient-to-br from-emerald-600 to-teal-600 text-white shadow-xl shadow-emerald-500/20 border-0 relative overflow-hidden">
+               <div className="absolute top-0 right-0 p-6 opacity-10">
+                   <ShieldCheck size={100} />
+               </div>
+              <p className="text-emerald-100 text-xs font-bold uppercase tracking-widest relative z-10">Withdrawable Balance</p>
+              <h2 className="text-5xl font-extrabold mt-3 text-white relative z-10">${user.wallet.main.toFixed(2)}</h2>
+              <p className="text-sm text-emerald-100 mt-2 font-mono relative z-10">≈ ₹{(user.wallet.main * EXCHANGE_RATE).toFixed(2)} INR</p>
+          </div>
+          
+           <Card className="p-8 col-span-2 md:col-span-1 flex flex-col justify-center">
               <p className="text-gray-400 text-xs font-bold uppercase tracking-widest">Pending Balance</p>
               <h2 className="text-4xl font-extrabold mt-3 text-gray-800">${user.wallet.pending.toFixed(2)}</h2>
-              <p className="text-sm text-blue-500 mt-2 flex items-center gap-1 font-medium">
-                  <span className="w-2 h-2 rounded-full bg-blue-500"></span> Under 24h Review
+              <p className="text-sm text-blue-500 mt-2 flex items-center gap-1 font-medium bg-blue-50 w-fit px-2 py-1 rounded-lg">
+                  <Clock size={14} /> Under 24h Review
               </p>
           </Card>
       </div>
@@ -68,7 +85,9 @@ export const Wallet: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Withdrawal Form */}
           <div className="lg:col-span-1">
-            <h3 className="text-xl font-bold text-gray-900 mb-4">Request Payout</h3>
+            <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <ArrowUpRight size={20} className="text-emerald-600"/> Request Payout
+            </h3>
             <Card className="p-6">
                 <form onSubmit={handleWithdraw} className="space-y-5">
                     <div>
@@ -81,7 +100,7 @@ export const Wallet: React.FC = () => {
                         />
                     </div>
                     
-                    <div className="space-y-3 text-sm bg-gray-50 p-4 rounded-xl">
+                    <div className="space-y-3 text-sm bg-gray-50 p-4 rounded-xl border border-gray-100">
                         <div className="flex justify-between text-gray-500">
                             <span>Platform Fee (10%)</span>
                             <span>-${(parseFloat(withdrawAmount || '0') * 0.1).toFixed(2)}</span>
@@ -96,7 +115,7 @@ export const Wallet: React.FC = () => {
                         </div>
                     </div>
 
-                    <Button type="submit" className="w-full" disabled={parseFloat(withdrawAmount || '0') < plan.minWithdrawal}>
+                    <Button type="submit" className="w-full shadow-lg shadow-emerald-500/20" disabled={parseFloat(withdrawAmount || '0') < plan.minWithdrawal}>
                         Withdraw Funds
                     </Button>
                     <p className="text-xs text-center text-gray-400">
@@ -109,10 +128,10 @@ export const Wallet: React.FC = () => {
           {/* Ledger History */}
           <div className="lg:col-span-2">
               <h3 className="text-xl font-bold text-gray-900 mb-4">Transaction History</h3>
-              <div className="bg-white/50 backdrop-blur-md border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
+              <div className="bg-white/60 backdrop-blur-md border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
                   <div className="overflow-x-auto">
                     <table className="w-full text-left text-sm text-gray-600">
-                        <thead className="bg-gray-50/80 uppercase text-xs font-bold text-gray-400">
+                        <thead className="bg-emerald-50/50 uppercase text-xs font-bold text-emerald-700 border-b border-emerald-100">
                             <tr>
                                 <th className="px-6 py-4">Type</th>
                                 <th className="px-6 py-4">Desc</th>
@@ -122,7 +141,7 @@ export const Wallet: React.FC = () => {
                         </thead>
                         <tbody className="divide-y divide-gray-100">
                             {ledger.map((tx) => (
-                                <tr key={tx.id} className="hover:bg-gray-50/50 transition-colors">
+                                <tr key={tx.id} className="hover:bg-white/80 transition-colors">
                                     <td className="px-6 py-4 font-mono text-xs font-semibold">{tx.type.replace('EARN_', '')}</td>
                                     <td className="px-6 py-4">{tx.description}</td>
                                     <td className={`px-6 py-4 text-right font-mono font-bold ${tx.amount > 0 ? 'text-emerald-600' : 'text-red-500'}`}>

@@ -2,9 +2,9 @@ import React from 'react';
 import { useAuth } from '../services/authContext';
 import { Card, Button, Badge } from '../components/ui';
 import { Link } from 'react-router-dom';
-import { Activity, TrendingUp, Users, Lock, ChevronRight, PlayCircle, Link as LinkIcon, CheckCircle2 } from 'lucide-react';
+import { Activity, TrendingUp, Users, Lock, ChevronRight, PlayCircle, Link as LinkIcon, CheckCircle2, ShieldCheck, AlertCircle, Ban } from 'lucide-react';
 import { PLANS } from '../constants';
-import { PlanTier } from '../types';
+import { PlanTier, UserStatus } from '../types';
 
 export const Dashboard: React.FC = () => {
   const { user } = useAuth();
@@ -23,23 +23,42 @@ export const Dashboard: React.FC = () => {
   const progressLink = Math.min((linksVisited / linkLimit) * 100, 100);
   const linkRemaining = Math.max(0, linkLimit - linksVisited);
 
+  // Calculate potential
+  const videoPotential = (plan.videoRate / plan.videoRateBasis) * videoLimit;
+  const linkPotential = (plan.linkRate / plan.linkRateBasis) * linkLimit;
+
+  // Status Badge Logic
+  const getStatusBadge = () => {
+      switch (user.status) {
+          case UserStatus.ACTIVE:
+              return <Badge type="success"><span className="flex items-center gap-1"><ShieldCheck size={12}/> Active</span></Badge>;
+          case UserStatus.SUSPENDED:
+              return <Badge type="warning"><span className="flex items-center gap-1"><AlertCircle size={12}/> Suspended</span></Badge>;
+          case UserStatus.BANNED:
+              return <Badge type="error"><span className="flex items-center gap-1"><Ban size={12}/> Banned</span></Badge>;
+          default:
+              return null;
+      }
+  };
+
   return (
     <div className="space-y-8">
       {/* Welcome Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
         <div>
             <h2 className="text-gray-500 text-sm font-semibold mb-0.5">Welcome back,</h2>
             <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">{user.name}</h1>
         </div>
-        <div className="hidden md:block">
-            <Badge type="success">{user.planId} PLAN</Badge>
+        <div className="flex items-center gap-3">
+            {getStatusBadge()}
+            <Badge type="info">{user.planId} PLAN</Badge>
         </div>
       </div>
 
       {/* Wallet Highlights */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Main Balance - Gradient Card */}
-        <div className="rounded-2xl p-6 bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-xl shadow-emerald-500/20 relative overflow-hidden">
+        <div className="rounded-2xl p-6 bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-xl shadow-emerald-500/20 relative overflow-hidden glass-card border-0">
             <div className="absolute top-0 right-0 p-8 opacity-10 transform translate-x-4 -translate-y-4">
                 <TrendingUp size={120} />
             </div>
@@ -47,7 +66,7 @@ export const Dashboard: React.FC = () => {
                 <p className="text-emerald-100 text-xs font-bold uppercase tracking-wider mb-2">Total Balance</p>
                 <h3 className="text-4xl font-extrabold mb-6">${user.wallet.main.toFixed(2)}</h3>
                 <Link to="/wallet">
-                    <button className="w-full bg-white/20 backdrop-blur-md hover:bg-white/30 text-white py-2.5 rounded-xl text-sm font-semibold transition-all">
+                    <button className="w-full bg-white/20 backdrop-blur-md hover:bg-white/30 text-white py-2.5 rounded-xl text-sm font-semibold transition-all border border-white/30">
                         Withdraw Funds
                     </button>
                 </Link>
@@ -107,7 +126,7 @@ export const Dashboard: React.FC = () => {
                         </div>
                         <div>
                             <h4 className="font-bold text-gray-800 text-lg">Watch & Earn</h4>
-                            <p className="text-xs text-gray-500 font-medium">Up to ${(plan.videoRate).toFixed(2)}/day</p>
+                            <p className="text-xs text-gray-500 font-medium">Up to ${videoPotential.toFixed(2)}/day</p>
                         </div>
                     </div>
                     <div className="text-right">
@@ -125,9 +144,9 @@ export const Dashboard: React.FC = () => {
                         </span>
                         <span>{Math.round(progressVideo)}%</span>
                     </div>
-                    <div className="w-full bg-gray-100 h-2.5 rounded-full overflow-hidden">
+                    <div className="w-full bg-gray-100 h-2.5 rounded-full overflow-hidden shadow-inner">
                         <div 
-                            className={`h-full rounded-full transition-all duration-700 ease-out ${videoRemaining === 0 ? 'bg-emerald-500' : 'bg-indigo-500'}`} 
+                            className={`h-full rounded-full transition-all duration-700 ease-out shadow-sm ${videoRemaining === 0 ? 'bg-emerald-500' : 'bg-indigo-500'}`} 
                             style={{ width: `${progressVideo}%` }}
                         ></div>
                     </div>
@@ -157,7 +176,7 @@ export const Dashboard: React.FC = () => {
                         </div>
                         <div>
                             <h4 className="font-bold text-gray-800 text-lg">Visit Links</h4>
-                            <p className="text-xs text-gray-500 font-medium">Up to ${(plan.linkRate).toFixed(2)}/day</p>
+                            <p className="text-xs text-gray-500 font-medium">Up to ${linkPotential.toFixed(2)}/day</p>
                         </div>
                     </div>
                     <div className="text-right">
@@ -175,9 +194,9 @@ export const Dashboard: React.FC = () => {
                         </span>
                         <span>{Math.round(progressLink)}%</span>
                     </div>
-                    <div className="w-full bg-gray-100 h-2.5 rounded-full overflow-hidden">
+                    <div className="w-full bg-gray-100 h-2.5 rounded-full overflow-hidden shadow-inner">
                         <div 
-                            className={`h-full rounded-full transition-all duration-700 ease-out ${linkRemaining === 0 ? 'bg-emerald-500' : 'bg-emerald-500'}`} 
+                            className={`h-full rounded-full transition-all duration-700 ease-out shadow-sm ${linkRemaining === 0 ? 'bg-emerald-500' : 'bg-emerald-500'}`} 
                             style={{ width: `${progressLink}%` }}
                         ></div>
                     </div>

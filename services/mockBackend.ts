@@ -1,4 +1,4 @@
-import { User, TransactionType, TransactionStatus, LedgerEntry, PlanTier } from '../types';
+import { User, TransactionType, TransactionStatus, LedgerEntry, PlanTier, LeaderboardEntry, LeaderboardTimeframe } from '../types';
 import { PLANS, FEES } from '../constants';
 
 // This file simulates strict server-side logic that would normally reside in Firebase Cloud Functions.
@@ -34,9 +34,11 @@ export const BackendService = {
     }
 
     // 3. Calculation: Dynamic Reward
-    // Rate is defined per 5 tasks. Calculate single task value.
-    const baseRate = taskType === 'VIDEO' ? plan.videoRate : plan.linkRate;
-    const perTaskReward = baseRate / 5; // e.g., 0.3 / 5 = 0.06
+    // Rate is defined per X tasks. Calculate single task value.
+    const rewardRate = taskType === 'VIDEO' ? plan.videoRate : plan.linkRate;
+    const rateBasis = taskType === 'VIDEO' ? plan.videoRateBasis : plan.linkRateBasis;
+    
+    const perTaskReward = rewardRate / rateBasis;
 
     // 4. Ledger: Create Transaction (Immutable Record)
     // This simulates firestore.collection('ledger').add(...)
@@ -114,5 +116,55 @@ export const BackendService = {
         balanceAfter: 0
       }
     ];
+  },
+
+  // SIMULATES: Cloud Function scheduled leaderboard generation
+  async getLeaderboard(timeframe: LeaderboardTimeframe): Promise<LeaderboardEntry[]> {
+    await new Promise(resolve => setTimeout(resolve, 800));
+
+    const multipliers = {
+      [LeaderboardTimeframe.DAILY]: 1,
+      [LeaderboardTimeframe.WEEKLY]: 7,
+      [LeaderboardTimeframe.MONTHLY]: 30,
+      [LeaderboardTimeframe.YEARLY]: 365,
+      [LeaderboardTimeframe.LIFETIME]: 500
+    };
+
+    const multiplier = multipliers[timeframe];
+    
+    // Generate realistic mock data
+    const entries: LeaderboardEntry[] = Array.from({ length: 20 }).map((_, i) => {
+      // Skew towards higher plans at the top
+      let plan = PlanTier.TRIAL;
+      if (i < 3) plan = PlanTier.ULTRA;
+      else if (i < 8) plan = PlanTier.PRO;
+      else if (i < 15) plan = PlanTier.BASIC;
+      
+      const config = PLANS[plan];
+      
+      // Calculate realistic max earnings for this plan over the timeframe
+      const dailyMax = ((config.videoRate/config.videoRateBasis) * config.dailyVideoLimit) + 
+                       ((config.linkRate/config.linkRateBasis) * config.dailyLinkLimit);
+      
+      const randomization = 0.6 + (Math.random() * 0.4); // 60% to 100% efficiency
+      const earnings = dailyMax * multiplier * randomization;
+      const tasks = Math.floor((config.dailyVideoLimit + config.dailyLinkLimit) * multiplier * randomization);
+
+      return {
+        rank: i + 1,
+        userId: `user_${generateId()}`,
+        name: `User${generateId().substring(0,3)}`, // Will be masked further in UI if needed, but usually masked on server
+        planId: plan,
+        earnings: parseFloat(earnings.toFixed(3)),
+        tasksCompleted: tasks
+      };
+    });
+
+    // Ensure strictly sorted
+    return entries.sort((a, b) => b.earnings - a.earnings).map((e, index) => ({
+        ...e,
+        rank: index + 1,
+        name: `${e.name.charAt(0)}***${e.name.charAt(e.name.length-1)}` // Masking Pattern: U***3
+    }));
   }
 };
