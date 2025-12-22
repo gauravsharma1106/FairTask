@@ -1,0 +1,8 @@
+{
+  "name": "FairTask",
+  "description": "Premium, secure, and scalable Android-first earning platform.",
+  "requestFramePermissions": [
+    "camera",
+    "geolocation"
+  ]
+}
