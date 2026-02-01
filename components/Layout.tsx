@@ -1,7 +1,8 @@
+
 import React from 'react';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../services/authContext';
-import { LayoutDashboard, Wallet, PlayCircle, Crown, LogOut, ShieldAlert, Zap, Trophy } from 'lucide-react';
+import { LayoutDashboard, Wallet, PlayCircle, Crown, LogOut, ShieldAlert, Zap, Trophy, Users } from 'lucide-react';
 
 export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, isAdmin, logout } = useAuth();
@@ -15,6 +16,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
   const navItems = [
     { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
     { icon: PlayCircle, label: 'Earn', path: '/earn' },
+    // Referrals moved to Profile menu
     { icon: Trophy, label: 'Leaderboard', path: '/leaderboard' },
     { icon: Wallet, label: 'Wallet', path: '/wallet' },
     { icon: Crown, label: 'Plans', path: '/plans' },

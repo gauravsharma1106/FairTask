@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useAuth } from '../services/authContext';
 import { BackendService } from '../services/mockBackend';
@@ -51,7 +52,7 @@ export const Earn: React.FC = () => {
     try {
         const result = await BackendService.completeTask(user, activeTask);
         if (result.success) {
-            toast.success(`Task Validated! Earned $${result.reward?.toFixed(3)}`, {
+            toast.success(`Task Validated! Earned $${(result.reward || 0).toFixed(3)}`, {
                 icon: '💰',
                 style: { borderRadius: '12px', background: '#fff', color: '#333' }
             });

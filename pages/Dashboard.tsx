@@ -1,8 +1,9 @@
+
 import React from 'react';
 import { useAuth } from '../services/authContext';
 import { Card, Button, Badge } from '../components/ui';
 import { Link } from 'react-router-dom';
-import { Activity, TrendingUp, Users, Lock, ChevronRight, PlayCircle, Link as LinkIcon, CheckCircle2, ShieldCheck, AlertCircle, Ban } from 'lucide-react';
+import { Activity, TrendingUp, Lock, ChevronRight, PlayCircle, Link as LinkIcon, CheckCircle2, ShieldCheck, AlertCircle, Ban, Clock } from 'lucide-react';
 import { PLANS } from '../constants';
 import { PlanTier, UserStatus } from '../types';
 
@@ -55,7 +56,7 @@ export const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Wallet Highlights */}
+      {/* Wallet Highlights - 3 Wallet Model */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Main Balance - Gradient Card */}
         <div className="rounded-2xl p-6 bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-xl shadow-emerald-500/20 relative overflow-hidden glass-card border-0">
@@ -63,47 +64,47 @@ export const Dashboard: React.FC = () => {
                 <TrendingUp size={120} />
             </div>
             <div className="relative z-10">
-                <p className="text-emerald-100 text-xs font-bold uppercase tracking-wider mb-2">Total Balance</p>
+                <p className="text-emerald-100 text-xs font-bold uppercase tracking-wider mb-2">Main Balance (Withdrawable)</p>
                 <h3 className="text-4xl font-extrabold mb-6">${user.wallet.main.toFixed(2)}</h3>
                 <Link to="/wallet">
                     <button className="w-full bg-white/20 backdrop-blur-md hover:bg-white/30 text-white py-2.5 rounded-xl text-sm font-semibold transition-all border border-white/30">
-                        Withdraw Funds
+                        Manage Wallet
                     </button>
                 </Link>
             </div>
         </div>
 
-        {/* Pending Card */}
-        <Card className="flex flex-col justify-between">
+        {/* Pending Card (Hold) */}
+        <Card className="flex flex-col justify-between border-l-4 border-l-orange-400">
             <div className="flex justify-between items-start">
                 <div>
                     <p className="text-gray-400 text-xs font-bold uppercase tracking-wider">Pending</p>
                     <h3 className="text-2xl font-bold text-gray-800 mt-1">${user.wallet.pending.toFixed(2)}</h3>
                 </div>
-                <div className="p-2.5 bg-blue-50 text-blue-500 rounded-xl">
-                    <Activity size={24} />
+                <div className="p-2.5 bg-orange-50 text-orange-500 rounded-xl">
+                    <Clock size={24} />
                 </div>
             </div>
-            <div className="mt-4 flex items-center gap-2 text-xs text-blue-600 bg-blue-50 p-2 rounded-lg">
-                <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></div>
-                Verifying (Approx. 24h)
+            <div className="mt-4 flex items-center gap-2 text-xs text-orange-600 bg-orange-50 p-2 rounded-lg">
+                <div className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse"></div>
+                24-72h Hold Period
             </div>
         </Card>
 
-        {/* Bonus Card */}
-        <Card className="flex flex-col justify-between border-dashed border-2 border-amber-200 bg-amber-50/50">
+        {/* Bonus Card (Locked) */}
+        <Card className="flex flex-col justify-between border-dashed border-2 border-purple-200 bg-purple-50/30">
             <div className="flex justify-between items-start">
                 <div>
-                    <p className="text-amber-500/80 text-xs font-bold uppercase tracking-wider">Locked Bonus</p>
+                    <p className="text-purple-500/80 text-xs font-bold uppercase tracking-wider">Locked Bonus</p>
                     <h3 className="text-2xl font-bold text-gray-800 mt-1">${user.wallet.bonus.toFixed(2)}</h3>
                 </div>
-                <div className="p-2.5 bg-amber-100 text-amber-500 rounded-xl">
+                <div className="p-2.5 bg-purple-100 text-purple-500 rounded-xl">
                     <Lock size={24} />
                 </div>
             </div>
-             <p className="text-xs text-amber-600 mt-4 font-medium">
-                Unlock by completing tasks
-            </p>
+             <Link to="/wallet" className="text-xs text-purple-600 mt-4 font-bold hover:underline flex items-center gap-1">
+                View Unlock Progress <ChevronRight size={12}/>
+            </Link>
         </Card>
       </div>
 
@@ -171,7 +172,7 @@ export const Dashboard: React.FC = () => {
             <Card className="border-l-4 border-l-emerald-500 hover:translate-y-[-2px] transition-transform duration-300">
                 <div className="flex justify-between items-start mb-6">
                     <div className="flex items-center gap-4">
-                        <div className="p-3 bg-emerald-50 text-emerald-500 rounded-2xl">
+                        <div className="p-3 bg-emerald-50 text-emerald-600 rounded-2xl">
                             <LinkIcon size={28} strokeWidth={2} />
                         </div>
                         <div>

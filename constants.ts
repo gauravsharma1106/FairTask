@@ -1,3 +1,4 @@
+
 import { PlanConfig, PlanTier } from './types';
 
 export const APP_NAME = "FairTask";
@@ -9,6 +10,11 @@ export const FEES = {
   PLATFORM_PERCENT: 0.10, // 10%
   TRANSACTION_PERCENT: 0.05, // 5%
   NET_PAYOUT_PERCENT: 0.85 // 85%
+};
+
+export const UNLOCK_RULES = {
+  REQUIRED_DAYS: 7,
+  REQUIRED_TASK_PERCENTAGE: 0.60 // 60%
 };
 
 export const PLANS: Record<PlanTier, PlanConfig> = {
@@ -77,4 +83,25 @@ export const PLANS: Record<PlanTier, PlanConfig> = {
 export const REFERRAL_BONUS = {
   PLAN: { L1: 0.08, L2: 0.04, L3: 0.02 },
   TASK: { L1: 0.03, L2: 0.02, L3: 0.01 }
+};
+
+export const LEADERBOARD_REWARDS = {
+  DAILY: {
+    1: 2.0,
+    2: 1.5,
+    3: 1.0
+  },
+  WEEKLY: {
+    1: 10.0,
+    2: 7.0,
+    3: 5.0,
+    4: 3.0,
+    5: 2.0
+  },
+  MONTHLY: {
+    1: 50.0,
+    2: 35.0,
+    3: 25.0,
+    REST_TOP_10: 10.0 // Ranks 4-10
+  }
 };

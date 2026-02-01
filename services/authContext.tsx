@@ -1,6 +1,7 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { User, UserStatus, PlanTier } from '../types';
-import { PLANS } from '../constants';
+import { User, UserStatus, PlanTier, KycStatus, AdminRole, AdminPermission } from '../types';
+import { BackendService } from './mockBackend';
 
 // MOCK USER FOR DEMO
 const MOCK_USER: User = {
@@ -13,14 +14,29 @@ const MOCK_USER: User = {
   wallet: {
     main: 12.50,
     pending: 3.20,
-    bonus: 5.00
+    bonus: 18.20
   },
   referralCode: 'EARN123',
+  referredBy: 'MASTER_REF',
+  referralStats: {
+      l1Count: 12,
+      l2Count: 27,
+      l3Count: 41,
+      totalEarnings: 45.50
+  },
   deviceFingerprint: 'fp_123abc',
   dailyStats: {
     date: new Date().toISOString().split('T')[0],
     videosWatched: 2,
     linksVisited: 1
+  },
+  bonusUnlockProgress: {
+      consecutiveDaysActive: 4,
+      hasCompletedWithdrawal: false,
+      lastActiveDate: new Date().toISOString().split('T')[0]
+  },
+  kyc: {
+      status: KycStatus.NOT_STARTED
   }
 };
 
@@ -28,6 +44,8 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   isAdmin: boolean;
+  adminRole: AdminRole | null;
+  permissions: AdminPermission[];
   login: (phone: string, otp: string) => Promise<void>;
   logout: () => void;
   refreshUser: () => Promise<void>;
@@ -52,13 +70,40 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = async (phone: string, otp: string) => {
     setLoading(true);
-    // Simulate API Call
     await new Promise(resolve => setTimeout(resolve, 1500));
     
-    // In real app: Firebase Auth signInWithCredential
-    // Then fetch user doc from Firestore
-    
-    const loggedInUser = { ...MOCK_USER, phone };
+    let loggedInUser = { ...MOCK_USER, phone };
+    const cleanPhone = phone.replace(/\D/g, '');
+
+    // 1. ROOT ADMIN CHECK (Hardcoded Credential)
+    if (cleanPhone === '9785927373' && otp === '7458') {
+        loggedInUser = { 
+            ...loggedInUser, 
+            name: 'ROOT ADMIN', 
+            email: 'root@fairtask.app', 
+            uid: 'admin_root', 
+            adminRole: AdminRole.SUPER_ADMIN,
+            // Super Admin has implicit full access, but we list key ones for UI
+            permissions: ['MANAGE_ADMINS', 'EMERGENCY_CONTROL', 'MANAGE_SETTINGS', 'VIEW_AUDIT'] 
+        };
+    } else {
+        // 2. CHECK SUB-ADMINS (Backend Mock)
+        const subAdmins = await BackendService.getSubAdmins();
+        const foundAdmin = subAdmins.find(a => a.phone === cleanPhone && a.active);
+
+        if (foundAdmin) {
+             loggedInUser = { 
+                ...loggedInUser, 
+                name: foundAdmin.name, 
+                email: `${foundAdmin.role.toLowerCase()}@fairtask.app`, 
+                uid: foundAdmin.id, 
+                adminRole: foundAdmin.role,
+                permissions: foundAdmin.permissions
+            };
+        }
+        // 3. Normal User (Demo) - Fallthrough
+    }
+
     setUser(loggedInUser);
     localStorage.setItem('earn_auth', JSON.stringify(loggedInUser));
     setLoading(false);
@@ -70,18 +115,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const refreshUser = async () => {
-    // In real app: Fetch latest doc from Firestore
     if (user) {
-      // Simulate refresh
-      const updated = { ...user }; // shallow copy
-      setUser(updated);
+      const stored = localStorage.getItem('earn_auth');
+      if(stored) {
+          const storedUser = JSON.parse(stored);
+          setUser(storedUser); 
+      }
     }
   };
 
-  const isAdmin = user?.email === 'admin@earnx.com' || user?.uid === 'admin_master';
+  const isAdmin = !!user?.adminRole;
+  const adminRole = user?.adminRole || null;
+  const permissions = user?.permissions || [];
 
   return (
-    <AuthContext.Provider value={{ user, loading, isAdmin, login, logout, refreshUser }}>
+    <AuthContext.Provider value={{ user, loading, isAdmin, adminRole, permissions, login, logout, refreshUser }}>
       {children}
     </AuthContext.Provider>
   );
